@@ -17,7 +17,11 @@ public class FromText extends FromData {
 
 	@Override
 	public String toDecimal() {
-		return null;
+		String result = "";
+		for (int i = 0; i < data.length(); i++) {
+			result += (short) data.charAt(i) + " ";		// cast char to short (2 bytes each)
+		}
+		return result;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 import java.lang.reflect.*;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class GlobalConverter {
@@ -8,6 +7,7 @@ public class GlobalConverter {
 	public static String[] arguments = null;
 	final String[] commands = { "hexadecimal", "octal", "decimal", "binary", "text" };
 	final String[] prefixes = { "0x", "0o", "0d", "0b", "0t" };
+	private Scanner sc;
 	
 	final String[] helpLines = {
 			"\nList of commands:\n",
@@ -26,15 +26,17 @@ public class GlobalConverter {
 	};
 	
 	public GlobalConverter(String[] args) {
-		arguments = formatArgs(args);
+		arguments = args;
 		checkArgs();
 	}
 	
 	public void checkArgs() {
 		if (arguments != null && arguments.length >= 1) {
+			/*
 			for (int i = 0; i < arguments.length; i++) {
 				System.out.println(i + " " + arguments[i]);
 			}
+			*/
 			
 			if (arguments.length > 2) {
 				reaskInput("Too much arguments.");
@@ -72,6 +74,7 @@ public class GlobalConverter {
 				for (int i = 0; i < prefixes.length; i++) {
 					if (arguments[1].startsWith(prefixes[i])) {
 						dataFrom = i;
+						arguments[1] = arguments[1].substring(prefixes[i].length());	// remove the prefix
 						break;
 					}
 				}
@@ -81,12 +84,12 @@ public class GlobalConverter {
 				 */
 				if (dataFrom == -1) {
 					dataFrom = 4;	// set to "text"
-					if (StringUtils.isNumeric(arguments[1])) {
+					if (StringUtils.isDecimal(arguments[1])) {
 						dataFrom = 2;	// set to "decimal"
 					}
 				}
 				
-				System.out.println("dataFrom: " + dataFrom + " dataTo: " + dataTo);
+				//System.out.println("dataFrom: " + dataFrom + " dataTo: " + dataTo);
 				
 				if (dataTo == -1) {
 					reaskInput("Invalid command \"" + cmd + "\".");		// if no command matches with cmd
@@ -136,12 +139,18 @@ public class GlobalConverter {
 		try {
 			Class<?> clazz = Class.forName(className);
 			Constructor<?> ctor = clazz.getConstructor(String.class);
-			FromData object = (FromData) ctor.newInstance(new Object[] {arguments[1]});
+			FromData object = (FromData) ctor.newInstance(new Object[] {data});
 			
 			Method method = object.getClass().getMethod(methodName);
 			String result = (String) method.invoke(object);
 			
-			System.out.println(result);		// prints the result of the conversion
+			if (result == null) {
+				reaskInput("Error when converting from "+commands[dataFrom] + " to " + commands[dataTo]+" with \""+data+"\".");
+			} else {
+				System.out.println(result);		// prints the result of the conversion
+				System.exit(0);
+			}
+			
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			reaskInput("Could not convert data from " + commands[dataFrom] + " to " + commands[dataTo]+".");
 		}
@@ -156,23 +165,12 @@ public class GlobalConverter {
 		if (System.console() != null) {
 			arguments = formatArgs(System.console().readLine());
 		} else {
-			try {
-				Scanner sc = new Scanner(System.in);
-				arguments = formatArgs(sc.nextLine());
-			} catch (NoSuchElementException e) {
-				reaskInput("Unable to read input: " + e.getMessage()+".");
-			}
+			if (sc == null) { sc = new Scanner(System.in); }
+			String input = sc.nextLine();
+			arguments = formatArgs(input);
 		}
  
 		checkArgs();
-	}
-	
-	public String[] formatArgs(String[] args) {
-		String input = "";
-		for (String arg : args) {
-			input += arg + " ";
-		}
-		return formatArgs(input.trim());
 	}
 	
 	public String[] formatArgs(String input) {
@@ -197,7 +195,7 @@ public class GlobalConverter {
 						if (i != input.length()-1 && input.charAt(i+1) != ' ') { return null; }
 						
 						insideString = false;
-						args.add(input.substring(startCharIndex+1, i).trim());
+						args.add(input.substring(startCharIndex+1, i));
 						startCharIndex = i+1;
 					} else {
 						insideString = true;
