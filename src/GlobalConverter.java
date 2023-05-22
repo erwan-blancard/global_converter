@@ -17,12 +17,13 @@ public class GlobalConverter {
 			"\t-b\tbinary\t\tConverts the entered data to binary.",
 			"\t-t\ttext\t\tConverts the entered data to a string.",
 			"\t-help\t--help\t\tShows this list.",
+			"\tq\tquit\t\tExit the program.",
 			"\nData Formatting:\n",
 			"\tHexadecimal based numbers must start with \"0x\".",
 			"\tOctal based numbers must start with \"0o\".",
 			"\tBinary numbers must start with \"0b\".",
-			"\n\tDecimal numbers and Text can be entered as plain text or inside quotation marks: \"Hello world\", \"0123456789\".",
-			"\tFor these 2 types, you can also specify the data type by having \"0d\" or \"0t\" as the prefix for Decimal numbers and Text respectively.\n"
+			"\n\tData can be entered as plain text or inside quotation marks: \"Hello world\", \"0123456789\".",
+			"\tFor Decimal numbers and Text, you can also specify the data type by having \"0d\" or \"0t\" as the prefix for Decimal numbers and Text respectively.\n"
 	};
 	
 	public GlobalConverter(String[] args) {
@@ -48,6 +49,8 @@ public class GlobalConverter {
 				if (arguments.length == 1) {
 					if (cmd.equals("-help") || cmd.equals("--help")) {
 						showHelp();
+						System.exit(0);
+					} else if (cmd.equals("q") || cmd.equals("quit")) {
 						System.exit(0);
 					} else {
 						reaskInput("Too few arguments.");

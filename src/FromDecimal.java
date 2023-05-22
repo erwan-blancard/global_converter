@@ -23,7 +23,35 @@ public class FromDecimal extends FromData {
 
 	@Override
 	public String toBinary() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = new ArrayList<String>();
+		
+		int startCharIndex = 0;
+		for (int i = 0; i < data.length(); i++) {
+			if (i >= startCharIndex) {
+				if (data.charAt(i) == ' ') {
+					nums.add(data.substring(startCharIndex, i).trim());
+					startCharIndex = i+1;
+				} else if (i == data.length()-1) {
+					nums.add(data.substring(startCharIndex).trim());
+				}
+			}
+		}
+		
+		String result = "";
+		
+		/*
+		 * convert decimal numbers to binary numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String binNum = StringUtils.parseBinaryFromDecimal(nums.get(i));
+			if (binNum == null) { return null; }
+			result += binNum + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -52,7 +80,7 @@ public class FromDecimal extends FromData {
 		 */
 		for (int i = 0; i < nums.size(); i++) {
 			int num = StringUtils.parseIntFromDecimal(nums.get(i));
-			if (num >= (short) ' ' && num <= (short) '~') {		// is character valid (between ' ' and '~' in ascii table)
+			if (StringUtils.isValidForChar(num)) {		// see StringUtils.isValidForChar()
 				result += (char) num;
 			} else {
 				result += '█';

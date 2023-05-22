@@ -29,6 +29,11 @@ public class StringUtils {
 	public static boolean isDecimal(char c) { return isCharIn(c, decimals); }
 	public static boolean isHexadecimal(char c) { return isCharIn(Character.toUpperCase(c), hexadecimals); }
 	
+	/*
+	 * is character valid (between ' ' and '~' in ascii table)
+	 */
+	public static boolean isValidForChar(int num) { return (num >= (short) ' ' && num <= (short) '~'); }
+	
 	public static int parseIntFromDecimal(String s) {
 		if (isDecimal(s)) {
 			int num = 0;
@@ -39,6 +44,55 @@ public class StringUtils {
 			return num;
 		}
 		return -1;
+	}
+	
+	public static String parseBinaryFromDecimal(String s) {
+		int num = parseIntFromDecimal(s);	// parse number from input string
+		if (num < 0) { return null; }		// if number is negative (parseIntFromDecimal() returned -1), return null
+		String binStr = "";		// string that will hold the representation of the binary number 
+		
+		/*
+		 * convert decimal number to binary number using this method:
+		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalBinaire.html
+		 */
+		
+		int q = num;
+		
+		while (q / 2 != 0) {
+			if (q % 2 == 0) {
+				binStr = "0" + binStr;
+			} else {
+				binStr = "1" + binStr;
+			}
+			q = q / 2;
+		}
+		
+		if (q == 0) {
+			binStr = "0" + binStr;
+		} else {
+			binStr = "1" + binStr;
+		}
+		
+		return binStr;
+	}
+	
+	public static int parseDecimalFromBinary(String s) {
+		if (!isBinary(s)) { return -1; }		// if input is not a binary number, return -1
+		
+		/*
+		 * convert binary number to decimal number using this method:
+		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalBinaire.html
+		 */
+		
+		int num = 0;
+		
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(s.length()-1-i) == '1') {
+				num += Math.pow(2, i);
+			}
+		}
+		
+		return num;
 	}
 	
 }

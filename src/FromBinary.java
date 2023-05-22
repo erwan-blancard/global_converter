@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class FromBinary extends FromData {
 
@@ -17,7 +18,35 @@ public class FromBinary extends FromData {
 
 	@Override
 	public String toDecimal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = new ArrayList<String>();
+		
+		int startCharIndex = 0;
+		for (int i = 0; i < data.length(); i++) {
+			if (i >= startCharIndex) {
+				if (data.charAt(i) == ' ') {
+					nums.add(data.substring(startCharIndex, i).trim());
+					startCharIndex = i+1;
+				} else if (i == data.length()-1) {
+					nums.add(data.substring(startCharIndex).trim());
+				}
+			}
+		}
+		
+		String result = "";
+		
+		/*
+		 * convert binary numbers to decimal numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromBinary(nums.get(i));
+			if (num == -1) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -27,7 +56,40 @@ public class FromBinary extends FromData {
 
 	@Override
 	public String toText() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = new ArrayList<String>();
+		
+		int startCharIndex = 0;
+		for (int i = 0; i < data.length(); i++) {
+			if (i >= startCharIndex) {
+				if (data.charAt(i) == ' ') {
+					nums.add(data.substring(startCharIndex, i).trim());
+					startCharIndex = i+1;
+				} else if (i == data.length()-1) {
+					nums.add(data.substring(startCharIndex).trim());
+				}
+			}
+		}
+		
+		String result = "";
+		
+		/*
+		 * convert binary numbers to characters
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromBinary(nums.get(i));
+			if (num < 0) { return null; }			// return null if num isn't a binary number (parseDecimalFromBinary() returned -1)
+			
+			if (StringUtils.isValidForChar(num)) {		// see StringUtils.isValidForChar()
+				result += (char) num;
+			} else {
+				result += '█';
+			}
+		}
+		
+		return result;
 	}
 
 }

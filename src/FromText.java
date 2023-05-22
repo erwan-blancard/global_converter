@@ -26,7 +26,13 @@ public class FromText extends FromData {
 
 	@Override
 	public String toBinary() {
-		return null;
+		String result = "";
+		for (int i = 0; i < data.length(); i++) {
+			String binNum = StringUtils.parseBinaryFromDecimal(""+(short) data.charAt(i));		// cast char to short (2 bytes each) and parse it to binary
+			if (binNum == null) { return null; }
+			result += binNum + " ";
+		}
+		return result;
 	}
 
 	@Override
