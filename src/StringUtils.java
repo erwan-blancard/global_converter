@@ -46,53 +46,59 @@ public class StringUtils {
 		return -1;
 	}
 	
-	public static String parseBinaryFromDecimal(String s) {
-		int num = parseIntFromDecimal(s);	// parse number from input string
-		if (num < 0) { return null; }		// if number is negative (parseIntFromDecimal() returned -1), return null
-		String binStr = "";		// string that will hold the representation of the binary number 
-		
-		/*
-		 * convert decimal number to binary number using this method:
-		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalBinaire.html
-		 */
-		
-		int q = num;
-		
-		while (q / 2 != 0) {
-			if (q % 2 == 0) {
-				binStr = "0" + binStr;
-			} else {
-				binStr = "1" + binStr;
-			}
-			q = q / 2;
-		}
-		
-		if (q == 0) {
-			binStr = "0" + binStr;
-		} else {
-			binStr = "1" + binStr;
-		}
-		
-		return binStr;
-	}
-	
-	public static int parseDecimalFromBinary(String s) {
-		if (!isBinary(s)) { return -1; }		// if input is not a binary number, return -1
-		
-		/*
-		 * convert binary number to decimal number using this method:
-		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalBinaire.html
-		 */
+	private static int parseDecimalFromBase(String s, char[] baseNumbers) {
+		if (!containsOnly(s, baseNumbers)) { return -1; }		// if input is not in baseNumbers, return -1
 		
 		int num = 0;
 		
 		for (int i = 0; i < s.length(); i++) {
-			if (s.charAt(s.length()-1-i) == '1') {
-				num += Math.pow(2, i);
+			int xNum = 0;		// stores the decimal representation of the X based number
+			for (int j = 0; j < baseNumbers.length; j++) {
+				if (s.charAt(i) == baseNumbers[j]) { xNum = j; }
 			}
+			num += xNum * Math.pow(baseNumbers.length, s.length()-1-i);		// xNum * baseNumbers.length ^ letter pos in string (reversed)
 		}
 		
 		return num;
+	}
+	
+	public static int parseDecimalFromBinary(String s) { return parseDecimalFromBase(s, binaries); }
+	public static int parseDecimalFromOctal(String s) { return parseDecimalFromBase(s, octals); }
+	public static int parseDecimalFromHexadecimal(String s) { return parseDecimalFromBase(s.toUpperCase(), hexadecimals); }
+	
+	private static String parseBaseFromDecimal(String s, char[] baseNumbers) {
+		int num = parseIntFromDecimal(s);	// parse number from input string
+		if (num < 0) { return null; }		// if number is negative (parseIntFromDecimal() returned -1), return null
+		String xStr = "";		// string that will hold the representation of the X number
+		
+		/*
+		 * convert number to decimal number using these methods:
+		 * 
+		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalBinaire.html
+		 * http://pedagogie.ac-limoges.fr/sti_si/accueil/FichesConnaissances/Sequence2SSi/co/ConvDecimalHexadecimal.html
+		 */
+		
+		int q = num;
+		
+		while (q / baseNumbers.length != 0) {
+			xStr = baseNumbers[q % baseNumbers.length] + xStr;
+			q = q / baseNumbers.length;
+		}
+		
+		xStr = baseNumbers[q % baseNumbers.length] + xStr;
+		
+		return xStr;
+	}
+	
+	public static String parseBinaryFromDecimal(String s) { return parseBaseFromDecimal(s, binaries); }
+	public static String parseOctalFromDecimal(String s) { return parseBaseFromDecimal(s, octals); }
+	public static String parseHexadecimalFromDecimal(String s) { return parseBaseFromDecimal(s.toUpperCase(), hexadecimals); }
+	
+	public static void main(String[] args) {
+		System.out.println("Test");
+		for (int i = 0; i < 1024; i++) {
+			System.out.println("i: "+parseDecimalFromBinary(parseBinaryFromDecimal(""+i)) + " | " + parseDecimalFromOctal(parseOctalFromDecimal(""+i)) + " | " + parseDecimalFromHexadecimal(parseHexadecimalFromDecimal(""+i)));
+		}
 	}
 	
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class FromOctal extends FromData {
 
@@ -7,7 +8,23 @@ public class FromOctal extends FromData {
 
 	@Override
 	public String toHexadecimal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert octal numbers to hex numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String num = StringUtils.parseHexadecimalFromDecimal(""+StringUtils.parseDecimalFromOctal(nums.get(i)));
+			if (num == null) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -17,17 +34,70 @@ public class FromOctal extends FromData {
 
 	@Override
 	public String toDecimal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert octal numbers to decimal numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromOctal(nums.get(i));
+			if (num == -1) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toBinary() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert octal numbers to binary numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String num = StringUtils.parseBinaryFromDecimal(""+StringUtils.parseDecimalFromOctal(nums.get(i)));
+			if (num == null) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toText() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert octal numbers to characters
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromOctal(nums.get(i));
+			if (num < 0) { return null; }			// return null if num isn't an octal number (parseDecimalFromOctal() returned -1)
+			
+			if (StringUtils.isValidForChar(num)) {		// see StringUtils.isValidForChar()
+				result += (char) num;
+			} else {
+				result += '█';
+			}
+		}
+		
+		return result;
 	}
 
 }

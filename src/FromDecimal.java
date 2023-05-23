@@ -8,12 +8,44 @@ public class FromDecimal extends FromData {
 
 	@Override
 	public String toHexadecimal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert decimal numbers to hex numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String hexNum = StringUtils.parseHexadecimalFromDecimal(nums.get(i));
+			if (hexNum == null) { return null; }
+			result += hexNum + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toOctal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert decimal numbers to octal numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String octNum = StringUtils.parseOctalFromDecimal(nums.get(i));
+			if (octNum == null) { return null; }
+			result += octNum + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -26,19 +58,7 @@ public class FromDecimal extends FromData {
 		/*
 		 * put numbers in an ArrayList
 		 */
-		ArrayList<String> nums = new ArrayList<String>();
-		
-		int startCharIndex = 0;
-		for (int i = 0; i < data.length(); i++) {
-			if (i >= startCharIndex) {
-				if (data.charAt(i) == ' ') {
-					nums.add(data.substring(startCharIndex, i).trim());
-					startCharIndex = i+1;
-				} else if (i == data.length()-1) {
-					nums.add(data.substring(startCharIndex).trim());
-				}
-			}
-		}
+		ArrayList<String> nums = splitNumbers();
 		
 		String result = "";
 		
@@ -59,19 +79,7 @@ public class FromDecimal extends FromData {
 		/*
 		 * put numbers in an ArrayList
 		 */
-		ArrayList<String> nums = new ArrayList<String>();
-		
-		int startCharIndex = 0;
-		for (int i = 0; i < data.length(); i++) {
-			if (i >= startCharIndex) {
-				if (data.charAt(i) == ' ') {
-					nums.add(data.substring(startCharIndex, i).trim());
-					startCharIndex = i+1;
-				} else if (i == data.length()-1) {
-					nums.add(data.substring(startCharIndex).trim());
-				}
-			}
-		}
+		ArrayList<String> nums = splitNumbers();
 		
 		String result = "";
 		

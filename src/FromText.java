@@ -7,12 +7,24 @@ public class FromText extends FromData {
 
 	@Override
 	public String toHexadecimal() {
-		return null;
+		String result = "";
+		for (int i = 0; i < data.length(); i++) {
+			String hexNum = StringUtils.parseHexadecimalFromDecimal(""+(short) data.charAt(i));		// cast char to short (2 bytes each) and parse it to hex
+			if (hexNum == null) { return null; }
+			result += hexNum + " ";
+		}
+		return result;
 	}
 
 	@Override
 	public String toOctal() {
-		return null;
+		String result = "";
+		for (int i = 0; i < data.length(); i++) {
+			String octNum = StringUtils.parseOctalFromDecimal(""+(short) data.charAt(i));		// cast char to short (2 bytes each) and parse it to octal
+			if (octNum == null) { return null; }
+			result += octNum + " ";
+		}
+		return result;
 	}
 
 	@Override

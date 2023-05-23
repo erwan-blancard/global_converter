@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class FromHexadecimal extends FromData {
 
@@ -12,22 +13,91 @@ public class FromHexadecimal extends FromData {
 
 	@Override
 	public String toOctal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert hex numbers to octal numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String num = StringUtils.parseOctalFromDecimal(""+StringUtils.parseDecimalFromHexadecimal(nums.get(i)));
+			if (num == null) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toDecimal() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert hex numbers to decimal numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromHexadecimal(nums.get(i));
+			if (num == -1) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toBinary() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert hex numbers to binary numbers
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			String num = StringUtils.parseBinaryFromDecimal(""+StringUtils.parseDecimalFromHexadecimal(nums.get(i)));
+			if (num == null) { return null; }
+			result += num + " ";
+		}
+		
+		return result;
 	}
 
 	@Override
 	public String toText() {
-		return null;
+		/*
+		 * put numbers in an ArrayList
+		 */
+		ArrayList<String> nums = splitNumbers();
+		
+		String result = "";
+		
+		/*
+		 * convert hex numbers to characters
+		 */
+		for (int i = 0; i < nums.size(); i++) {
+			int num = StringUtils.parseDecimalFromHexadecimal(nums.get(i));
+			if (num < 0) { return null; }			// return null if num isn't a hex number (parseDecimalFromHexadecimal() returned -1)
+			
+			if (StringUtils.isValidForChar(num)) {		// see StringUtils.isValidForChar()
+				result += (char) num;
+			} else {
+				result += '█';
+			}
+		}
+		
+		return result;
 	}
 	
 }
