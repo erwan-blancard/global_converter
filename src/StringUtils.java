@@ -1,4 +1,7 @@
 public class StringUtils {
+	
+	public static final short MIN_CHAR_VAL = (short) ' ';
+	public static final short MAX_CHAR_VAL = (short) '~';
 
 	public static final char[] binaries = { '0', '1' };
 	public static final char[] octals = { '0', '1', '2', '3', '4', '5', '6', '7' };
@@ -32,7 +35,7 @@ public class StringUtils {
 	/*
 	 * is character valid (between ' ' and '~' in ascii table)
 	 */
-	public static boolean isValidForChar(int num) { return (num >= (short) ' ' && num <= (short) '~'); }
+	public static boolean isValidForChar(int num) { return (num >= MIN_CHAR_VAL && num <= MAX_CHAR_VAL); }
 	
 	public static int parseIntFromDecimal(String s) {
 		if (isDecimal(s)) {

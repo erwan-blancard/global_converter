@@ -11,6 +11,7 @@ public class GlobalConverter {
 	
 	final String[] helpLines = {
 			"\nList of commands:\n",
+			
 			"\t-h\thexadecimal\tConverts the entered data to a hexadecimal based number.",
 			"\t-o\toctal\t\tConverts the entered data to an octal based number.",
 			"\t-d\tdecimal\t\tConverts the entered data to a decimal based number.",
@@ -18,12 +19,31 @@ public class GlobalConverter {
 			"\t-t\ttext\t\tConverts the entered data to a string.",
 			"\t-help\t--help\t\tShows this list.",
 			"\tq\tquit\t\tExit the program.",
+			
 			"\nData Formatting:\n",
+			
 			"\tHexadecimal based numbers must start with \"0x\".",
 			"\tOctal based numbers must start with \"0o\".",
 			"\tBinary numbers must start with \"0b\".",
 			"\n\tData can be entered as plain text or inside quotation marks: \"Hello world\", \"0123456789\".",
-			"\tFor Decimal numbers and Text, you can also specify the data type by having \"0d\" or \"0t\" as the prefix for Decimal numbers and Text respectively.\n"
+			"\tFor Decimal numbers and Text, you can also specify the data type by having \"0d\" or \"0t\" as the prefix for Decimal numbers and Text respectively.",
+			
+			"\nUsing the Caesar Algorithm:\n",
+			
+			"\tUsage (after [command] and [input]): [encrypt/decrypt] [key]\n",
+			
+			"\tWhen using encrypt, the input data type must be text.",
+			"\tWhen using decrypt, the output data type must be text.",
+			
+			"\n\tThe key must be a decimal number and can be entered as plain text or inside quotation marks.",
+			
+			"\nExamples of commands:\n",
+			
+			"\t-h \"Hello world\"",
+			"\t-h \"Hello world\" encrypt 3",
+			"\t-h \"Hello world\" encrypt \"15\"",
+			"\t-t \"0x4B 68 6F 6F 72 23 7A 72 75 6F 67\" decrypt \"3\"",
+			"\t-t \"0x57 74 7B 7B 7E 2F 28 7E 23 7B 73\" decrypt 15"
 	};
 	
 	public GlobalConverter(String[] args) {
@@ -39,67 +59,88 @@ public class GlobalConverter {
 			}
 			*/
 			
-			if (arguments.length > 2) {
-				reaskInput("Too much arguments.");
-			} else {
-				
-				// search for command match
-				String cmd = arguments[0];
-				
-				if (arguments.length == 1) {
-					if (cmd.equals("-help") || cmd.equals("--help")) {
-						showHelp();
-						System.exit(0);
-					} else if (cmd.equals("q") || cmd.equals("quit")) {
-						System.exit(0);
-					} else {
-						reaskInput("Too few arguments.");
-					}
-				}
-				
-				int dataFrom = -1;
-				int dataTo = -1;
-				
-				for (int i = 0; i < commands.length; i++) {
-					/*
-					 * if the command entered matches with the command list,
-					 * set dataTo to the index of the command.
-					 */
-					if (cmd.equals(commands[i]) || cmd.equals("-"+commands[i].charAt(0))) {
-						dataTo = i;
-						break;
-					}
-				}
-				
-				/*
-				 * Try to determine datatype with prefix
-				 */
-				for (int i = 0; i < prefixes.length; i++) {
-					if (arguments[1].startsWith(prefixes[i])) {
-						dataFrom = i;
-						arguments[1] = arguments[1].substring(prefixes[i].length());	// remove the prefix
-						break;
-					}
-				}
-				
-				/*
-				 * If no prefix matches, datatype is either Decimal or Text
-				 */
-				if (dataFrom == -1) {
-					dataFrom = 4;	// set to "text"
-					if (StringUtils.isDecimal(arguments[1])) {
-						dataFrom = 2;	// set to "decimal"
-					}
-				}
-				
-				//System.out.println("dataFrom: " + dataFrom + " dataTo: " + dataTo);
-				
-				if (dataTo == -1) {
-					reaskInput("Invalid command \"" + cmd + "\".");		// if no command matches with cmd
+			// search for command match
+			String cmd = arguments[0];
+			
+			if (arguments.length == 1) {
+				if (cmd.equals("-help") || cmd.equals("--help")) {
+					showHelp();
+					System.exit(0);
+				} else if (cmd.equals("q") || cmd.equals("quit")) {
+					System.exit(0);
 				} else {
-					convert(dataFrom, dataTo, arguments[1]);
+					reaskInput("Too few arguments.");
+				}
+			}
+			
+			int dataFrom = -1;
+			int dataTo = -1;
+			
+			for (int i = 0; i < commands.length; i++) {
+				/*
+				 * if the command entered matches with the command list,
+				 * set dataTo to the index of the command.
+				 */
+				if (cmd.equals(commands[i]) || cmd.equals("-"+commands[i].charAt(0))) {
+					dataTo = i;
+					break;
+				}
+			}
+			
+			/*
+			 * Try to determine datatype with prefix
+			 */
+			for (int i = 0; i < prefixes.length; i++) {
+				if (arguments[1].startsWith(prefixes[i])) {
+					dataFrom = i;
+					arguments[1] = arguments[1].substring(prefixes[i].length());	// remove the prefix
+					break;
+				}
+			}
+			
+			/*
+			 * If no prefix matches, datatype is either Decimal or Text
+			 */
+			if (dataFrom == -1) {
+				dataFrom = 4;	// set to "text"
+				if (StringUtils.isDecimal(arguments[1])) {
+					dataFrom = 2;	// set to "decimal"
+				}
+			}
+			
+			//System.out.println("dataFrom: " + dataFrom + " dataTo: " + dataTo);
+			
+			if (dataTo == -1) {
+				reaskInput("Invalid command \"" + cmd + "\".");		// if no command matches with cmd
+			} else {
+				boolean useCaesar = false;
+				boolean shouldDecrypt = false;
+				
+				if (arguments.length > 2) {
+					// can't have more than 4 arguments
+					if (arguments.length > 4) { reaskInput("Too much arguments."); }
+
+					// check if the Caesar algorithm should be used and how (encrypt/decrypt)
+					if (arguments[2].equals("encrypt") || arguments[2].equals("decrypt")) {
+						shouldDecrypt = (arguments[2].equals("decrypt"));
+						if (arguments.length == 4) {
+							useCaesar = true;
+						} else {
+							if (arguments.length == 4) { reaskInput("The key \""+arguments[3]+"\" is not a number !"); }
+							else { reaskInput("No key was specified !"); }
+						}
+					} else {
+						reaskInput("Invalid argument \"" + arguments[2] +"\".");
+					}
 				}
 				
+				if (useCaesar && !shouldDecrypt && dataFrom != 4) {
+					reaskInput("Cannot encrypt if the input data is not text !");
+				} else if (useCaesar && shouldDecrypt && dataTo != 4) {
+					reaskInput("Cannot decrypt if the output data is not text !");
+				} else {
+					convert(dataFrom, dataTo, arguments[1], shouldDecrypt, (useCaesar) ? arguments[3] : null);
+				}
 			}
 			
 		} else {
@@ -111,7 +152,20 @@ public class GlobalConverter {
 		for (String line : helpLines) { System.out.println(line); }
 	}
 	
-	public void convert(int dataFrom, int dataTo, String data) {
+	public void convert(int dataFrom, int dataTo, String data, boolean decrypt, String caesarKey) {
+		boolean useCaesar = (caesarKey != null && caesarKey.length() > 0);
+		/*
+		 * encrypt the data if Caesar algorithm is used and dataFrom is text
+		 */
+		if (dataFrom == 4 && useCaesar) {
+			if (!decrypt) {
+				data = Caesar.encrypt(data, caesarKey);
+				if (data == null) {		// if key is not a decimal number (Caesar.encrypt() returned null)
+					reaskInput("The key \""+caesarKey+"\" is not valid !");
+				}
+			}
+		}
+		
 		/*
 		 * Creates a string representing the name of the Class that will be used to convert data
 		 * 
@@ -150,6 +204,12 @@ public class GlobalConverter {
 			if (result == null) {
 				reaskInput("Error when converting from "+commands[dataFrom] + " to " + commands[dataTo]+" with \""+data+"\".");
 			} else {
+				if (useCaesar && decrypt) {
+					result = Caesar.decrypt(result, caesarKey);
+					if (result == null) {
+						reaskInput("The key \"" + caesarKey + "\" is invalid !");
+					}
+				}
 				System.out.println(result);		// prints the result of the conversion
 				System.exit(0);
 			}
@@ -199,7 +259,7 @@ public class GlobalConverter {
 						
 						insideString = false;
 						args.add(input.substring(startCharIndex+1, i));
-						startCharIndex = i+1;
+						startCharIndex = i+2;
 					} else {
 						insideString = true;
 						startCharIndex = i;
